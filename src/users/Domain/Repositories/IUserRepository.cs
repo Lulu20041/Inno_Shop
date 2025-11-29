@@ -16,6 +16,8 @@ namespace Domain.Repositories
 
         Task<User> GetByEmailAsync(string email);
 
+        Task<User> GetByPasswordResetTokenAsync(string token);
+
         Task CreateAsync(User user);
 
         Task UpdateAsync(User user);

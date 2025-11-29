@@ -1,9 +1,14 @@
 
+using Application.Interfaces;
+using Domain.Repositories;
+using Infrastructure;
 using Infrastructure.Persistence;
+using Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace UsersAPI
 {
@@ -13,20 +18,30 @@ namespace UsersAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("AuthSettings"));
+
             builder.Services.AddDbContext<UsersContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
                 );
+            
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<IUserService, IUserService>();
+            builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+            builder.Services.AddScoped<IPasswordHasher, IPasswordHasher>();
 
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    var jwtOptions = builder.Configuration.GetSection("AuthSettings").Get<JwtOptions>();
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
+                        RequireSignedTokens = true,
                         ValidateIssuer = true,
-                        ValidIssuer = "Inno_shop",
-                        ValidateLifetime = true
-                        //IssuerSigningKey = 
+                        ValidateLifetime = true,
+
+                        IssuerSigningKey = new SymmetricSecurityKey
+                        (Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
                     };
                 });
 

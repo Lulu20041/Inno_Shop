@@ -17,5 +17,15 @@ namespace Domain
         public string Email { get; set; } = string.Empty;
 
         public int Role {  get; set; }
+
+        public string PasswordResetToken { get; set; } = string.Empty;
+
+        public DateTime? ResetTokenExpires { get; set; }
+
+        public DateTime? CreatedAt { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public bool IsEmailConfirmed { get; set; } = false;
     }
 }

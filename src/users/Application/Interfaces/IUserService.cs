@@ -20,5 +20,15 @@ namespace Application.Interfaces
         Task UpdateAsync(User user);
 
         Task DeleteByIdAsync(int id);
+
+        Task<bool> InitiatePasswordReset(string email);
+
+        Task<bool> ResetPassword(string token, string newPassword);
+
+        Task<bool> ConfirmEmail(string token);
+
+        Task DeactivateUserAsync(int userId);
+
+        Task ActivateUserAsync(int userId);
     }
 }
