@@ -24,20 +24,24 @@ namespace UsersAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<User>> GetById(int id)
+        public async Task<ActionResult<User>> Get(int id)
         {
             var user = await service.GetByIdAsync(id);
             return Ok(user);
         }
 
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<IActionResult> ActivateById(int id)
         {
+            await service.ActivateUserAsync(id);
+            return Ok();
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> DeactivateById(int id)
         {
+            await service.DeactivateUserAsync(id);
+            return Ok();
         }
     }
 }
