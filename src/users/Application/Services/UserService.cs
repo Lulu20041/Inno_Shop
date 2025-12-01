@@ -119,6 +119,7 @@ namespace Application.Services
 
             user.IsActive = true;
             await repo.UpdateAsync(user);
+
         }
     }
 }

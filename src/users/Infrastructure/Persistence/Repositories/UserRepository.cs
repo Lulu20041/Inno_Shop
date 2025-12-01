@@ -34,6 +34,13 @@ namespace Infrastructure.Persistence.Repositories
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<User> GetByPasswordResetTokenAsync(string token)
+        {
+            return await context
+                .Users
+                .FirstOrDefaultAsync(u => u.PasswordResetToken == token);
+        }
+
         public async Task CreateAsync(User user)
         {
             await context.Users.AddAsync(user);
@@ -42,7 +49,7 @@ namespace Infrastructure.Persistence.Repositories
 
         public async Task UpdateAsync(User user)
         {
-            var newUser = user;
+            var newUser = await context.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
             newUser.Name = user.Name;
             newUser.Email = user.Email;
             newUser.HashPassword = user.HashPassword;
@@ -55,5 +62,7 @@ namespace Infrastructure.Persistence.Repositories
             context.Users.Remove(user);
             await context.SaveChangesAsync();
         }
+
+        
     }
 }
