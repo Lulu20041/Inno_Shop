@@ -35,6 +35,8 @@ namespace Infrastructure
                 );
 
             var token = new JwtSecurityToken(
+                issuer: options.Issuer,
+                audience: options.Audience,
                 claims: claims,
                 signingCredentials: signingCredentials,
                 expires: DateTime.UtcNow.AddHours(options.Expires)

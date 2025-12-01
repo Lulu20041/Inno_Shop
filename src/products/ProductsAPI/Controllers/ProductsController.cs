@@ -1,6 +1,7 @@
 ﻿using Application;
 using Application.Commands;
 using Application.Interfaces;
+using Application.Queries;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -32,9 +33,9 @@ namespace ProductsAPI.Controllers
 
         [HttpGet("{id:int}")]
         [Authorize]
-        public async Task<ActionResult<Product>> Get(int id, CancellationToken cancellationToken)
+        public async Task<ActionResult<Product>> Get(GetProductByIdQuery query, CancellationToken cancellationToken)
         {
-            Product author = await productService.GetByIdAsync(id, cancellationToken);
+            var author = await mediator.Send(query, cancellationToken);
             return Ok(author);
         }
 
@@ -46,19 +47,19 @@ namespace ProductsAPI.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<string>> Put(int id, [FromBody] Product product, CancellationToken cancellationToken)
+        public async Task<ActionResult<string>> Put(UpdateProductCommand command, CancellationToken cancellationToken)
         {
 
-            await productService.UpdateAsync(product, cancellationToken);
-            return Ok($"Product {product.Id} modified");
-
+            var productId = await mediator.Send(command, cancellationToken);
+            return Ok($"Product {productId} modified");
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult<string>> DeleteAsync(int id, CancellationToken cancellationToken)
+        public async Task<ActionResult<string>> DeleteAsync(GetProductByIdQuery query, CancellationToken cancellationToken)
         {
-            await productService.DeleteByIdAsync(id, cancellationToken);
-            return Ok($"Product {id} was deleted");
+            var product = await mediator.Send(query, cancellationToken);
+            await productService.DeleteByIdAsync(product.Id, cancellationToken);
+            return Ok($"Product {query.Id} was deleted");
         }
     }
 }

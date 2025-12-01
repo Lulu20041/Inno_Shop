@@ -1,6 +1,8 @@
-﻿using Application.Interfaces;
+﻿using Application.DTO;
+using Application.Interfaces;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,20 +17,17 @@ namespace UsersAPI.Controllers
         public UsersController(IUserService service) => this.service = service; 
 
         [HttpGet]
-        public async Task<IEnumerable<User>> Get()
+        public async Task<ActionResult<List<User>>> Get()
         {
-            return await service.GetAllAsync();
+            var users = await service.GetAllAsync();
+            return Ok(users);
         }
 
-        [HttpGet("{id}")]
-        public async Task<User> GetById(int id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<User>> GetById(int id)
         {
-            return await service.GetByIdAsync(id);
-        }
-
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
+            var user = await service.GetByIdAsync(id);
+            return Ok(user);
         }
 
         [HttpPut("{id}")]

@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Domain;
+using Domain.Exceptions;
 using Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,11 @@ namespace Application.Services
 
         public async Task<ICollection<User>> GetAllAsync() => await repo.GetAllAsync();
 
-        public async Task<User> GetByIdAsync(int id) => await repo.GetByIdAsync(id);
+        public async Task<User> GetByIdAsync(int id)
+        {
+            var user = await repo.GetByIdAsync(id);
+            return user == null ? throw new UserNotFoundException(id) : user;
+        }
 
         public async Task Register(string name, string email, string pasword)
         {
@@ -43,8 +48,7 @@ namespace Application.Services
 
         public async Task<string> Login(string email, string password)
         {
-            User user = await repo.GetByEmailAsync(email);
-
+            User user = await repo.GetByEmailAsync(email) ?? throw new UserNotFoundException(email);
             bool result = hasher.Verify(password, user.HashPassword);
 
             if (result == false)
@@ -99,12 +103,7 @@ namespace Application.Services
 
         public async Task DeactivateUserAsync(int userId)
         {
-            var user = await repo.GetByIdAsync(userId);
-            if (user == null)
-            {
-                throw new Exception("User not found");
-            }
-
+            var user = await repo.GetByIdAsync(userId) ?? throw new UserNotFoundException(userId);
             user.IsActive = false;
             await repo.UpdateAsync(user);
         }
@@ -113,13 +112,10 @@ namespace Application.Services
         {
             var user = await repo.GetByIdAsync(userId);
             if (user == null)
-            {
-                throw new Exception("User not found");
-            }
+                throw new UserNotFoundException(userId);
 
             user.IsActive = true;
             await repo.UpdateAsync(user);
-
         }
     }
 }

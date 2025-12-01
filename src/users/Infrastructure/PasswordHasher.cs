@@ -5,7 +5,7 @@ using System;
 
 namespace Application
 {
-    internal class PasswordHasher : IPasswordHasher
+    public class PasswordHasher : IPasswordHasher
     {
         public string Generate(string password)
         {

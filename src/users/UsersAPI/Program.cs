@@ -1,13 +1,17 @@
 
+using Application;
 using Application.Interfaces;
+using Application.Services;
 using Domain.Repositories;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using ProductsAPI;
 using System.Text;
 
 namespace UsersAPI
@@ -18,30 +22,36 @@ namespace UsersAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("AuthSettings"));
+            builder.Services.AddProblemDetails();
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
             builder.Services.AddDbContext<UsersContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
                 );
             
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IUserService, IUserService>();
+            builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IJwtProvider, JwtProvider>();
-            builder.Services.AddScoped<IPasswordHasher, IPasswordHasher>();
+            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    var jwtOptions = builder.Configuration.GetSection("AuthSettings").Get<JwtOptions>();
+                    var jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>();
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        RequireSignedTokens = true,
                         ValidateIssuer = true,
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidateAudience = true,
+                        ValidAudience = jwtOptions.Audience,
                         ValidateLifetime = true,
-
-                        IssuerSigningKey = new SymmetricSecurityKey
-                        (Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtOptions.SecretKey)
+                        )
                     };
                 });
 
@@ -52,7 +62,6 @@ namespace UsersAPI
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

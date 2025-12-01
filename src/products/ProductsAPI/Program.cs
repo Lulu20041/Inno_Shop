@@ -46,7 +46,7 @@ namespace ProductsAPI
 
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"])
+                            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"])
                         )
                     };
                 });
