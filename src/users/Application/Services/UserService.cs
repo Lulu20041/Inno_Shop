@@ -46,6 +46,22 @@ namespace Application.Services
             await repo.CreateAsync(user);
         }
 
+        public async Task RegisterAdmin(string name, string email, string password)
+        {
+            string hashPassword = hasher.Generate(password);
+            var user = new User
+            {
+                Name = name,
+                Email = email,
+                HashPassword = hashPassword,
+                IsActive = true,
+                IsEmailConfirmed = false,
+                CreatedAt = DateTime.UtcNow,
+                Role = UserRole.Admin
+            };
+            await repo.CreateAsync(user);
+        }
+
         public async Task<string> Login(string email, string password)
         {
             User user = await repo.GetByEmailAsync(email) ?? throw new UserNotFoundException(email);
@@ -115,6 +131,16 @@ namespace Application.Services
                 throw new UserNotFoundException(userId);
 
             user.IsActive = true;
+            await repo.UpdateAsync(user);
+        }
+
+        public async Task UpdateUserRole(int userId, UserRole role)
+        {
+            var user = await repo.GetByIdAsync(userId) ?? throw new UserNotFoundException(userId);
+            if (!Enum.IsDefined(typeof(UserRole), role))
+                throw new ArgumentException("Invalid role value");
+
+            user.Role = role;
             await repo.UpdateAsync(user);
         }
     }

@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using ProductsAPI;
 using System.Text;
+using UsersAPI.Extensions;
 
 namespace UsersAPI
 {
@@ -37,6 +37,8 @@ namespace UsersAPI
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
             builder.Services.AddAuthorization();
+            builder.Services.AddAuthorizationPolicies();
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

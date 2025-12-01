@@ -15,9 +15,13 @@ namespace Application.Interfaces
 
         Task Register(string name, string email, string password);
 
-        Task<string> Login(string name, string password);
+        Task RegisterAdmin(string name, string email, string password);
+
+        Task<string> Login(string email, string password);
 
         Task UpdateAsync(User user);
+
+        Task UpdateUserRole(int userId, UserRole role);
 
         Task DeleteByIdAsync(int id);
 

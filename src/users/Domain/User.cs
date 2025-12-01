@@ -23,7 +23,7 @@ namespace Domain
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        public int Role {  get; set; }
+        public UserRole Role { get; set; } = UserRole.User;
 
         public string PasswordResetToken { get; set; } = string.Empty;
 
