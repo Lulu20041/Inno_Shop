@@ -8,20 +8,20 @@ namespace Domain.Repositories
 {
     public interface IUserRepository
     {
-        Task<ICollection<User>> GetAllAsync();
+        Task<ICollection<User>> GetAllAsync(CancellationToken cancellationToken);
 
         IQueryable<User> GetAll();
 
-        Task<User> GetByIdAsync(int id);
+        Task<User> GetByIdAsync(int id, CancellationToken cancellationToken);
 
-        Task<User> GetByEmailAsync(string email);
+        Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken);
 
-        Task<User> GetByPasswordResetTokenAsync(string token);
+        Task<User> GetByPasswordResetTokenAsync(string token, CancellationToken cancellationTokenncellationToken);
 
-        Task CreateAsync(User user);
+        Task CreateAsync(User user, CancellationToken cancellationToken);
 
-        Task UpdateAsync(User user);
+        Task UpdateAsync(User user, CancellationToken cancellationToken);
 
-        Task DeleteByIdAsync(int id);
+        Task DeleteByIdAsync(int id, CancellationToken cancellationToken);
     }
 }

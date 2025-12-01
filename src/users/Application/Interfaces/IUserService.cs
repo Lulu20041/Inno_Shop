@@ -9,30 +9,28 @@ namespace Application.Interfaces
 {
     public interface IUserService
     {
-        Task<ICollection<User>> GetAllAsync();
+        Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken);
 
-        Task<User> GetByIdAsync(int id);
+        Task<User> GetByIdAsync(int id, CancellationToken cancellationToken);
 
-        Task Register(string name, string email, string password);
+        Task Register(string name, string email, string password, CancellationToken cancellationToken);
 
-        Task RegisterAdmin(string name, string email, string password);
+        Task RegisterAdmin(string name, string email, string password, CancellationToken cancellationToken);
 
-        Task<string> Login(string email, string password);
+        Task<string> Login(string email, string password, CancellationToken cancellationToken);
 
-        Task UpdateAsync(User user);
+        Task UpdateAsync(User user, CancellationToken cancellationToken);
 
-        Task UpdateUserRole(int userId, UserRole role);
+        Task UpdateUserRole(int userId, UserRole role, CancellationToken cancellationToken);
 
-        Task DeleteByIdAsync(int id);
+        Task DeleteByIdAsync(int id, CancellationToken cancellationToken);
 
-        Task<bool> InitiatePasswordReset(string email);
+        Task<bool> InitiatePasswordReset(string email, CancellationToken cancellationToken);
 
-        Task<bool> ResetPassword(string token, string newPassword);
+        Task<bool> ResetPassword(string token, string newPassword, CancellationToken cancellationToken);
 
-        Task<bool> ConfirmEmail(string token);
+        Task DeactivateUserAsync(int userId, CancellationToken cancellationToken);
 
-        Task DeactivateUserAsync(int userId);
-
-        Task ActivateUserAsync(int userId);
+        Task ActivateUserAsync(int userId, CancellationToken cancellationToken);
     }
 }

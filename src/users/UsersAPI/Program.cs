@@ -1,13 +1,15 @@
 
 using Application;
 using Application.Interfaces;
-using Application.Services;
 using Domain.Repositories;
 using Infrastructure;
+using Infrastructure.Options;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Repositories;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -26,15 +28,23 @@ namespace UsersAPI
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
             builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
+            builder.Services.Configure<ApplicationOptions>(builder.Configuration.GetSection("Application"));
+            builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection("Smtp"));
+
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AssemblyReference.Assembly));
+
 
             builder.Services.AddDbContext<UsersContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
                 );
-            
+
             builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IUserService, UserService>();
-            builder.Services.AddScoped<IJwtProvider, JwtProvider>();
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+            builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+            builder.Services.AddScoped<IEmailConfirmationTokenService, EmailConfirmationTokenService>();
+            builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
+            builder.Services.AddScoped<IUserService, UserService>();
 
             builder.Services.AddAuthorization();
             builder.Services.AddAuthorizationPolicies();

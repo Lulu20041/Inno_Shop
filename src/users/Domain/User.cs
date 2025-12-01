@@ -25,9 +25,13 @@ namespace Domain
 
         public UserRole Role { get; set; } = UserRole.User;
 
-        public string PasswordResetToken { get; set; } = string.Empty;
+        public string EmailConfirmationToken { get; set; } = string.Empty;
 
-        public DateTime? ResetTokenExpires { get; set; }
+        public DateTime? EmailTokenExpires { get; set; }
+
+        public string ResetPasswordToken { get; set; } = string.Empty;
+
+        public DateTime? ResetTokenExpires { get; set  ; }
 
         public DateTime? CreatedAt { get; set; }
 

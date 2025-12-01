@@ -19,37 +19,37 @@ namespace UsersAPI.Controllers
         public UsersController(IUserService service) => this.service = service; 
 
         [HttpGet]
-        public async Task<ActionResult<List<User>>> Get()
+        public async Task<ActionResult<List<User>>> Get(CancellationToken cancellationToken)
         {
-            var users = await service.GetAllAsync();
+            var users = await service.GetAllAsync(cancellationToken);
             return Ok(users);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<User>> Get(int id)
+        public async Task<ActionResult<User>> Get(int id, CancellationToken cancellationToken)
         {
-            var user = await service.GetByIdAsync(id);
+            var user = await service.GetByIdAsync(id, cancellationToken);
             return Ok(user);
         }
 
         [HttpPut("{id}/activate")]
-        public async Task<IActionResult> ActivateById(int id)
+        public async Task<IActionResult> ActivateById(int id, CancellationToken cancellationToken)
         {
-            await service.ActivateUserAsync(id);
+            await service.ActivateUserAsync(id, cancellationToken);
             return Ok();
         }
 
         [HttpPut("{id}/role")]
-        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] int role)
+        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] int role, CancellationToken cancellationToken)
         {
-            await service.UpdateUserRole(id, (UserRole)role);
+            await service.UpdateUserRole(id, (UserRole)role, cancellationToken);
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeactivateById(int id)
+        public async Task<IActionResult> DeactivateById(int id, CancellationToken cancellationToken)
         {
-            await service.DeactivateUserAsync(id);
+            await service.DeactivateUserAsync(id, cancellationToken);
             return Ok();
         }
     }
