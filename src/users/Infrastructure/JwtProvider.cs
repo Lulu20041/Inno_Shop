@@ -25,7 +25,8 @@ namespace Infrastructure
         {
             Claim[] claims = [
                 new("userId",user.Id.ToString()),
-                new("userName",user.Name)
+                new("userName",user.Name),
+                new("userRole",((int)user.Role).ToString())
                 ];
 
 

@@ -55,9 +55,19 @@ namespace UsersAPI
                             Encoding.UTF8.GetBytes(jwtOptions.SecretKey)
                         )
                     };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            context.Token = context.Request.Cookies["wjt"];
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             builder.Services.AddControllers();
+            builder.Services.AddHttpContextAccessor();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

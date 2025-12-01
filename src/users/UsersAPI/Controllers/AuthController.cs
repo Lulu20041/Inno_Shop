@@ -11,9 +11,14 @@ namespace UsersAPI.Controllers
     [Authorize(Policy = "UserOrAdmin")]
     public class AuthController : ControllerBase
     {
+        private readonly IHttpContextAccessor accessor;
         private readonly IUserService service;
 
-        public AuthController(IUserService service) => this.service = service;
+        public AuthController(IHttpContextAccessor accessor,IUserService service)
+        {
+            this.accessor = accessor;
+            this.service = service;
+        }
 
         [AllowAnonymous]
         [HttpPost("register")]
@@ -28,6 +33,10 @@ namespace UsersAPI.Controllers
         public async Task<ActionResult<string>> Login(UserDTO request)
         {
             string token = await service.Login(request.Email, request.Password);
+
+            var context = accessor.HttpContext;
+            context?.Response.Cookies.Append("wjt", token);
+
             return Ok(token);
         }
 
